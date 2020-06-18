@@ -1,0 +1,95 @@
+# written by Tristan Nunn
+# 08/05/12020HE
+# The paths in this file represent the distance it takes to get between the points
+# without crossing another node.
+# This file also assumes the entrance and exit for the ride is in the same spot
+
+#==== Entrance =========================
+newpath "Entrance"
+"Tower of Terror" 450
+"Pony Jousts" 150
+"Crisis at Farpoint" 300
+"Rex Rampage" 300
+"The Pain Train" 300
+"The Descent" 300
+
+#==== Medieval =========================
+newpath "Tower of Terror"
+"The Iron Jaws" 90
+"Mystic Fortunes" 90
+"The Pain Train" 150
+"Crisis at Farpoint" 450
+"Rex Rampage" 450
+"Pet a Saur" 450
+
+newpath "The Iron Jaws"
+"Cloister of Cruelty" 90
+
+newpath "Cloister of Cruelty"
+"Pony Jousts" 100
+
+newpath "Pony Jousts"
+"Mystic Fortunes" 100
+"Rex Rampage" 150
+"Pet a Saur" 150
+"The Pain Train" 450
+"Crisis at Farpoint" 450
+
+#==== Future =========================
+newpath "Crisis at Farpoint"
+"Build a Bot" 90
+"Robot Conflicts" 180
+"Rex Rampage" 150
+"Pet a Saur" 450
+"The Descent" 150
+"The Pain Train" 450
+
+newpath "Build a Bot"
+"Laser Lock" 250
+"Trench Chase" 180
+
+newpath "Laser Lock"
+"Trench Chase" 240
+"Robot Conflicts" 100
+
+newpath "Trench Chase"
+"Robot Conflicts" 90
+
+#==== Prehistoric Park =========================
+newpath "Rex Rampage"
+"Pet a Saur" 180
+"SauroPods" 90
+"Hatchling Nest" 180
+"The Pain Train" 450
+"The Descent" 450
+
+newpath "Pet a Saur"
+"Hatchling Nest" 250
+"SauroPods" 120
+"Raptor Races" 360
+"The Descent" 450
+"The Pain Train" 450
+
+newpath "SauroPods"
+"Raptor Races" 350
+"Hatchling Nest" 100
+
+newpath "Hatchling Nest"
+"Raptor Races" 90
+
+#==== "Cowboy" =========================
+newpath "High Noon"
+"Hall O Mirrors" 100
+
+newpath "Hall O Mirrors"
+"The Descent" 150
+"The Pain Train" 160
+"Steampunk Cups" 250
+
+newpath "The Pain Train"
+"The Descent" 150
+"Steampunk Cups" 210
+
+newpath "The Descent"
+"Steampunk Cups" 90
+

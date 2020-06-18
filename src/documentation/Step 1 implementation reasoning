@@ -1,0 +1,19 @@
+Written by Tristan Nunn, wdb18160
+
+Step 1 implementation design reasoning
+
+RideTree -
+Now, in this implementation I can't identify an appropriate place to use a tree - mostly because we're only to use 1 ride. However in anticipation of step two, I've made a binary search tree with rides contained on the leaves of the tree. Currently I use a depth first search to retrieve the rightmost ride (a ride with lots of conditions) as this is faster then a breadth-first search if I want to get the same single ride - the first ride I find - every time.
+
+Preferences -
+I decided to settle on a simple count of users who "like" or who are "okay" with different ride attributes. This functionality I implemented thinking it would be cool to do something funky and useful with, but I haven't, so I'll probably do that in the future or just remove it for ease of user use in the final version. I've used arrays of heights, in wheelchairs, and kids since these are tied to the individual - a 150cm tall adult in a wheelchair should only count as 1 person not able to go on a non-accessible, kids-only ride with a height limit of 120cm.
+
+Compatibility -
+Due to the nature of needing to return a boolean whether a group can go on a ride and a string reason why, and structs don't exist in java, I decided to move all that calculation logic into a single class which can return both the boolean and the string while running the calculation only once.
+
+Ride -
+This is just a struct but in Java. This is because it's an extremely simple object.
+
+RideHandler and rides.txt
+I'm going to be honest and admit I probably spent a bit too long developing this class over a Saturday. The reason I implemented this class like this is because it will be very easy to modify ride attributes or add new rides - and for me personally, it's very easy to check which rides have which attributes without having to refer to the sideways graph shown in the requirements.
+

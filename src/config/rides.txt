@@ -1,0 +1,147 @@
+# written by Tristan Nunn
+# 08/05/12020HE
+
+#==== Medieval =========================
+category "Medieval"
+
+newride "Tower of Terror"
+wheelchair
+horror
+water
+linetime 10
+
+newride "The Iron Jaws"
+height 100 -
+minclusive
+adrenaline
+linetime 20
+
+newride "Cloister of Cruelty"
+wheelchair
+group 5 6
+adrenaline
+horror
+water
+linetime 15
+
+newride "Pony Jousts"
+height 80 120
+kids
+linetime 0
+
+newride "Mystic Fortunes"
+wheelchair
+group 1 1
+adrenaline
+horror
+linetime 30
+
+#==== Future =========================
+category "Futuristic"
+
+newride "Crisis at Farpoint"
+wheelchair
+group 4 8
+adrenaline
+kids
+water
+linetime 15
+
+newride "Build a Bot"
+wheelchair
+kids
+linetime 60
+
+newride "Laser Lock"
+height 110 -
+group 2 6
+adrenaline
+horror
+linetime 35
+
+newride "Trench Chase"
+height - 160
+wheelchair
+adrenaline
+kids
+linetime 10
+
+newride "Robot Conflicts"
+wheelchair
+adrenaline
+horror
+kids
+linetime 20
+
+#==== Prehistoric Park =========================
+category "Jurassic"
+
+newride "Rex Rampage"
+group 2 2
+adrenaline
+horror
+water
+linetime 20
+
+newride "Pet a Saur"
+height - 100
+wheelchair
+kids
+linetime 15
+
+newride "SauroPods"
+height 100 -
+adrenaline
+water
+linetime 15
+
+newride "Raptor Races"
+wheelchair
+group 2 2
+adrenaline
+kids
+linetime 30
+
+newride "Hatchling Nest"
+height - 100
+wheelchair
+kidsonly
+linetime 0
+
+#==== "Cowboy" =========================
+category "Industrial"
+
+newride "High Noon"
+wheelchair
+group 2 2
+adrenaline
+kids
+linetime 15
+
+newride "Hall O Mirrors"
+wheelchair
+adrenaline
+linetime 0
+
+newride "Steampunk Cups"
+group 3 6
+adrenaline
+horror
+kids
+linetime 25
+
+newride "The Pain Train"
+height 100 -
+wheelchair
+group 2 8
+adrenaline
+horror
+water
+linetime 45
+
+newride "The Descent"
+adrenaline
+horror
+kids
+water
+linetime 30
