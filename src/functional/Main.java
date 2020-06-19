@@ -12,6 +12,7 @@ public class Main
 
   public static void main(String[] args)
   {
+    
     int userPath = -1;//userPath = 3;
     while (userPath < 0)//(userPath == 3)
     {
