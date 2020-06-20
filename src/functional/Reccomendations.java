@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Reccomendations
 {
@@ -18,6 +19,13 @@ public class Reccomendations
     public Ride ride;
     public boolean visited = false;
     public int shortestPath = Integer.MAX_VALUE;
+  }
+
+  private static class RidePath
+  {
+    public Ride source;
+    public Ride destination;
+    public int distance;
   }
 
   public static void recommend(Preferences p, RideTree rt, int recKey)
@@ -32,6 +40,9 @@ public class Reccomendations
         break;
       case 3:
         makeMap();
+        break;
+      case 4:
+        getRoute(p, rt);
     }
   }
 
@@ -63,6 +74,37 @@ public class Reccomendations
       System.out.println();
       printCompatibility(ridesByZone);
     }
+  }
+
+  // Using Kruskal's algorithm, I hope
+  private static List<RidePath> getRoute(Preferences p, RideTree rt)
+  {
+    // 1. Find the minimum distance between each of the rides the group wants to visit
+    // 2. Turn this into weight.
+    // 3. Order this by Ride - List<Path>
+    // 4. Select the shortest path out there
+    // 4. Combine the two sources into List<Ride source + Ride dest> - List<Path sourcePaths + Path destPaths>
+    // 6. Move the chosen path into its own List
+    // 7. Keep combining until all rides are in the List<Rides> - List<paths>
+    // 8. Keep adding the chosen paths to the list of chosen paths
+    // 9. At the end the List<Paths> should be empty (Since all redundant paths are being removed)
+    // 10 Return the chosen paths
+
+    List<Ride> rides = rt.getMultipleRides(p);
+
+    Map<Ride, Map<Ride, Integer>> pathWeights = new HashMap<>();
+    Map<Ride, List<RideNode>> nodeWeights = new HashMap<>();
+
+    for (Ride r : rides)
+    {
+      List<RideNode> rawNodes = minDistance(r);
+      List<RideNode> filteredNodes = rawNodes.stream().filter(n->{return rides.contains(n.ride) && n.ride != r;}).collect(Collectors.toList());
+      nodeWeights.put(r, filteredNodes);
+    }
+
+    int i = 0;
+
+    return null;
   }
 
   private static void makeMap()
@@ -100,6 +142,13 @@ public class Reccomendations
     Map<Ride, Map<Ride, Integer>> paths = PathHandler.PATHS;
 
     List<RideNode> r = makeRideNodes();
+
+    if (source != null)
+    {
+      RideNode sourceNode = getRideNode(source, r);
+      if (sourceNode != null)
+        sourceNode.visited = true;
+    }
 
     Queue<RideNode> toReview = new LinkedList<>();
 

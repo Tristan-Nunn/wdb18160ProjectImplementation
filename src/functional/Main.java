@@ -20,12 +20,12 @@ public class Main
           "Get recommendations for a single ride",
           "Get recommendations for a the entire park",
           "Generate a map of the park",
+          "Get a recommended route to take around the park",
           "Quit"
       ));
     }
 
-    
-    if (userPath == 4)
+    if (userPath == 5)
       return;
 
     Preferences prefs = makeGroup(); //Preferences.initPreferences();
