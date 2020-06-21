@@ -16,7 +16,7 @@ public class Reccomendations
 {
   private static class RideNode
   {
-    public Ride ride;
+    public Ride targetRide;
     public boolean visited = false;
     public int shortestPath = Integer.MAX_VALUE;
   }
@@ -25,7 +25,7 @@ public class Reccomendations
   {
     public Ride source;
     public Ride destination;
-    public int distance;
+    public int weight;
   }
 
   public static void recommend(Preferences p, RideTree rt, int recKey)
@@ -92,15 +92,32 @@ public class Reccomendations
 
     List<Ride> rides = rt.getMultipleRides(p);
 
-    Map<Ride, Map<Ride, Integer>> pathWeights = new HashMap<>();
+    List<RidePath> finalPaths = new ArrayList<>();
+    Map<List<Ride>, Map<Ride, Integer>> pathWeights = new HashMap<>();
     Map<Ride, List<RideNode>> nodeWeights = new HashMap<>();
 
     for (Ride r : rides)
     {
       List<RideNode> rawNodes = minDistance(r);
-      List<RideNode> filteredNodes = rawNodes.stream().filter(n->{return rides.contains(n.ride) && n.ride != r;}).collect(Collectors.toList());
+      List<RideNode> filteredNodes = rawNodes.stream().filter(n->{return rides.contains(n.targetRide) && n.targetRide != r;}).collect(Collectors.toList());
       nodeWeights.put(r, filteredNodes);
     }
+
+    for (Map.Entry<Ride, List<RideNode>> r : nodeWeights.entrySet())
+    {
+      Map<Ride, Integer> weightsForRide = new HashMap<>();
+      List<Ride> rideList = new LinkedList<>();
+      rideList.add(r.getKey());
+      for (RideNode node : r.getValue())
+      {
+        weightsForRide.put(node.targetRide, getWeight(node.shortestPath, p, node.targetRide));
+      }
+      pathWeights.put(rideList, weightsForRide);
+    }
+
+    // need to
+
+
 
     int i = 0;
 
@@ -117,7 +134,7 @@ public class Reccomendations
 
     for (RideNode node : nodes)
       for (int i = 0; i < RideHandler.ZONES.size(); i++)
-        if (node.ride.category.equals(RideHandler.ZONES.get(i)))
+        if (node.targetRide.category.equals(RideHandler.ZONES.get(i)))
           nodesByZone.get(i).add(node);
 
     for (int i = 0; i < nodesByZone.size(); i++)
@@ -129,7 +146,7 @@ public class Reccomendations
       for (RideNode r : nodesByZone.get(i))
       {
         System.out.println();
-        System.out.println(makeSpace(r.ride.name, 25) + r.shortestPath);
+        System.out.println(makeSpace(r.targetRide.name, 25) + r.shortestPath);
       }
 
     }
@@ -165,10 +182,10 @@ public class Reccomendations
       if (!sourceNode.visited)
       {
         sourceNode.visited = true;
-        for (Ride destination : paths.get(sourceNode.ride).keySet())
+        for (Ride destination : paths.get(sourceNode.targetRide).keySet())
         {
           RideNode destinationNode = getRideNode(destination, r);
-          int alternatePathSize = sourceNode.shortestPath + paths.get(sourceNode.ride).get(destination);
+          int alternatePathSize = sourceNode.shortestPath + paths.get(sourceNode.targetRide).get(destination);
           destinationNode.shortestPath = destinationNode.shortestPath < alternatePathSize ? destinationNode.shortestPath : alternatePathSize;
           toReview.add(destinationNode);
         }
@@ -257,7 +274,7 @@ public class Reccomendations
     for (Ride r : RideHandler.RIDES)
     {
       RideNode toAdd = new RideNode();
-      toAdd.ride = r;
+      toAdd.targetRide = r;
       nodes.add(toAdd);
     }
 
@@ -267,10 +284,29 @@ public class Reccomendations
   private static RideNode getRideNode(Ride r, List<RideNode> n)
   {
     for (RideNode node : n)
-      if (node.ride == r)
+      if (node.targetRide == r)
         return node;
 
     return null;
   }
+
+  private static Integer getWeight(int shortestPath, Preferences p, Ride ride)
+  {
+    int preferenceWeight = 0;
+
+    // Only the people who really want to go on this ride type reduce the weighting.
+    preferenceWeight += ride.adrenaline ? p.getAdren_loves() : 0;
+    preferenceWeight += ride.kids ? p.getKid_loves() : 0;
+    preferenceWeight += ride.horror ? p.getHorror_loves() : 0;
+    preferenceWeight += ride.water ? p.getWater_loves() : 0;
+
+    // scales the preference weight up to 200.
+    preferenceWeight = preferenceWeight * 200 / p.partySize;
+
+    // weighting wait time as 5 times more boring than walk time
+    return shortestPath + (5*ride.waitTime) - preferenceWeight;
+  }
+
+  private static RidePath getShortestPath() 
 
 }
