@@ -93,7 +93,7 @@ public class Reccomendations
     List<Ride> rides = rt.getMultipleRides(p);
 
     List<RidePath> finalPaths = new ArrayList<>();
-    Map<List<Ride>, Map<Ride, Integer>> pathWeights = new HashMap<>();
+    List<RidePath> pathWeights = new LinkedList<>();
     Map<Ride, List<RideNode>> nodeWeights = new HashMap<>();
 
     for (Ride r : rides)
@@ -105,19 +105,23 @@ public class Reccomendations
 
     for (Map.Entry<Ride, List<RideNode>> r : nodeWeights.entrySet())
     {
-      Map<Ride, Integer> weightsForRide = new HashMap<>();
-      List<Ride> rideList = new LinkedList<>();
-      rideList.add(r.getKey());
       for (RideNode node : r.getValue())
       {
-        weightsForRide.put(node.targetRide, getWeight(node.shortestPath, p, node.targetRide));
+        RidePath newPath = new RidePath();
+        newPath.source = r.getKey();
+        newPath.destination = node.targetRide;
+        newPath.weight = getWeight(node.shortestPath, p, node.targetRide);
+        pathWeights.add(newPath);
       }
-      pathWeights.put(rideList, weightsForRide);
     }
 
-    // need to
-
-
+    List<List<Ride>> clouds = new LinkedList<>();
+    while (!pathWeights.isEmpty())
+    {
+      RidePath shortest = getShortestPath(pathWeights);
+      finalPaths.add(shortest);
+      removeInternalDestinations(pathWeights, clouds, shortest);
+    }
 
     int i = 0;
 
@@ -307,6 +311,71 @@ public class Reccomendations
     return shortestPath + (5*ride.waitTime) - preferenceWeight;
   }
 
-  private static RidePath getShortestPath() 
+  private static RidePath getShortestPath(List<RidePath> paths)
+  {
+    RidePath shortest = paths.get(0);
+    Iterator<RidePath> it = paths.iterator();
+    while (it.hasNext())
+    {
+      RidePath next = it.next();
+      if (next.weight < shortest.weight)
+        shortest = next;
+    }
+    return shortest;
+  }
+
+  private static void removeInternalDestinations(List<RidePath> paths, List<List<Ride>> clouds, RidePath newPath)
+  {
+    if (clouds.isEmpty())
+    {
+      List<Ride> cloud = new ArrayList<>();
+      cloud.add(newPath.source);
+      cloud.add(newPath.destination);
+      clouds.add(cloud);
+    }
+    else
+    {
+      List<Ride> sourceCloud = null;
+      List<Ride> destinationCloud = null;
+      boolean containersEqual = false;
+      for (List<Ride> cloud : clouds)
+      {
+        boolean containsSource = cloud.contains(newPath.source);
+        boolean containsDestination = cloud.contains(newPath.destination);
+        if (containsSource && containsDestination)
+        {
+          sourceCloud = cloud;
+          containersEqual = true;
+        }
+        else if (containsSource)
+          sourceCloud = cloud;
+        else if (containsDestination)
+          destinationCloud = cloud;
+      }
+
+      // I have the cloud (list) which contains the source ride (if any)
+      // I have the cloud (list) which contains the destination ride (if any)
+      // I need to:
+      //  - clouds are the same: remove all paths to each of the rides from within that list
+      //  - clouds are different: merge the lists and remove all internal paths from within the new list
+      //  - one cloud exists: add the not found path to the existing list and remove all internal paths from within that list
+      //  - no cloud exists: create a new one with the source and destination and add it to the clouds
+
+      Iterator<RidePath> it = paths.iterator();
+
+      if (sourceCloud != null && destinationCloud != null) // clouds are different
+      {
+        
+      }
+    }
+
+
+
+    Iterator<RidePath> it = paths.iterator();
+    while (it.hasNext())
+    {
+      RidePath next = it.next();
+    }
+  }
 
 }
