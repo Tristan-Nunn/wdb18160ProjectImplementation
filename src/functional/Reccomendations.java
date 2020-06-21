@@ -123,9 +123,26 @@ public class Reccomendations
       removeInternalDestinations(pathWeights, clouds, shortest);
     }
 
-    int i = 0;
+    // also add the path from the entrance
+    List<RideNode> nodesFromEntrace = minDistance(null);
+    int minWeight = Integer.MAX_VALUE;
+    Ride minWeightRide = null;
+    for (RideNode node : nodesFromEntrace)
+    {
+      int weight = getWeight(node.shortestPath, p, node.targetRide);
+      if (minWeight > weight)
+      {
+        minWeight = weight;
+        minWeightRide = node.targetRide;
+      }
+    }
+    RidePath entrance = new RidePath();
+    entrance.source = null;
+    entrance.destination = minWeightRide;
+    entrance.weight = minWeight;
+    finalPaths.add(entrance);
 
-    return null;
+    return finalPaths;
   }
 
   private static void makeMap()
@@ -326,56 +343,65 @@ public class Reccomendations
 
   private static void removeInternalDestinations(List<RidePath> paths, List<List<Ride>> clouds, RidePath newPath)
   {
-    if (clouds.isEmpty())
+    List<Ride> sourceCloud = null;
+    List<Ride> destinationCloud = null;
+    for (List<Ride> cloud : clouds)
+    {
+      boolean containsSource = cloud.contains(newPath.source);
+      boolean containsDestination = cloud.contains(newPath.destination);
+      if (containsSource && containsDestination)
+      {
+        sourceCloud = cloud;
+      } else if (containsSource)
+        sourceCloud = cloud;
+      else if (containsDestination)
+        destinationCloud = cloud;
+    }
+
+    // I have the cloud (list) which contains the source ride (if any)
+    // I have the cloud (list) which contains the destination ride (if any)
+    // I need to:
+    //  - clouds are the same: remove all paths to each of the rides from within that list
+    //  - clouds are different: merge the lists and remove all internal paths from within the new list
+    //  - one cloud exists: add the not found path to the existing list and remove all internal paths from within that list
+    //  - no cloud exists: create a new one with the source and destination and add it to the clouds
+
+    boolean useDestination = false;
+    if (sourceCloud != null && destinationCloud != null) // clouds are different
+    {
+      sourceCloud.addAll(destinationCloud);
+      clouds.remove(destinationCloud);
+    } else if (sourceCloud != null)
+    {
+      sourceCloud.add(newPath.destination);
+    } else if (destinationCloud != null)
+    {
+      destinationCloud.add(newPath.source);
+      useDestination = true;
+    } else
     {
       List<Ride> cloud = new ArrayList<>();
       cloud.add(newPath.source);
       cloud.add(newPath.destination);
       clouds.add(cloud);
+      sourceCloud = cloud;
     }
-    else
-    {
-      List<Ride> sourceCloud = null;
-      List<Ride> destinationCloud = null;
-      boolean containersEqual = false;
-      for (List<Ride> cloud : clouds)
-      {
-        boolean containsSource = cloud.contains(newPath.source);
-        boolean containsDestination = cloud.contains(newPath.destination);
-        if (containsSource && containsDestination)
-        {
-          sourceCloud = cloud;
-          containersEqual = true;
-        }
-        else if (containsSource)
-          sourceCloud = cloud;
-        else if (containsDestination)
-          destinationCloud = cloud;
-      }
-
-      // I have the cloud (list) which contains the source ride (if any)
-      // I have the cloud (list) which contains the destination ride (if any)
-      // I need to:
-      //  - clouds are the same: remove all paths to each of the rides from within that list
-      //  - clouds are different: merge the lists and remove all internal paths from within the new list
-      //  - one cloud exists: add the not found path to the existing list and remove all internal paths from within that list
-      //  - no cloud exists: create a new one with the source and destination and add it to the clouds
-
-      Iterator<RidePath> it = paths.iterator();
-
-      if (sourceCloud != null && destinationCloud != null) // clouds are different
-      {
-        
-      }
-    }
-
-
 
     Iterator<RidePath> it = paths.iterator();
     while (it.hasNext())
     {
-      RidePath next = it.next();
+      RidePath path = it.next();
+      if (useDestination)
+      {
+        if (destinationCloud.contains(path.destination) && destinationCloud.contains(path.source))
+          it.remove();
+      }
+      else
+      {
+        if (sourceCloud.contains(path.destination) && sourceCloud.contains(path.source))
+          it.remove();
+      }
     }
-  }
 
+  }
 }
