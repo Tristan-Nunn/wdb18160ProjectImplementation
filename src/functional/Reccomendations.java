@@ -42,7 +42,7 @@ public class Reccomendations
         makeMap();
         break;
       case 4:
-        getRoute(p, rt);
+        recommendPath(p, rt);
     }
   }
 
@@ -76,8 +76,51 @@ public class Reccomendations
     }
   }
 
-  // Using Kruskal's algorithm, I hope
-  private static List<RidePath> getRoute(Preferences p, RideTree rt)
+  private static void recommendPath(Preferences p, RideTree rt)
+  {
+    List<Ride> rides = rt.getMultipleRides(p);
+
+    if (rides.size() == 0)
+    {
+      System.out.println("No rides in the Time travellers' park were found to meet your specifications.");
+      return;
+    }
+    List<RidePath> paths = getRoute(p, rides);
+    paths = createReverseRoutes(paths);
+
+    printPath(paths);
+  }
+
+  private static void printPath(List<RidePath> paths)
+  {
+
+    System.out.println("Here is our suggested path for your group:");
+    for (RidePath path : paths)
+    {
+      String sourceName = (path.source != null) ? path.source.name : "the entrance";
+      System.out.println("From " + sourceName + ", go to " + path.destination.name + ".");
+    }
+  }
+
+  private static List<RidePath> createReverseRoutes(List<RidePath> paths)
+  {
+    int pathsSize = paths.size();
+    for (int i = 0; i < pathsSize; i++)
+    {
+      if (paths.get(i).source != null && paths.get(i).destination != null)
+      {
+        RidePath reversedPath = new RidePath();
+        reversedPath.source = paths.get(i).destination;
+        reversedPath.destination = paths.get(i).source;
+        reversedPath.weight = paths.get(i).weight;
+        paths.add(reversedPath);
+      }
+    }
+    return paths;
+  }
+
+  // Using Kruskal's algorithm, I think
+  private static List<RidePath> getRoute(Preferences p, List<Ride> rides)
   {
     // 1. Find the minimum distance between each of the rides the group wants to visit
     // 2. Turn this into weight.
@@ -89,8 +132,6 @@ public class Reccomendations
     // 8. Keep adding the chosen paths to the list of chosen paths
     // 9. At the end the List<Paths> should be empty (Since all redundant paths are being removed)
     // 10 Return the chosen paths
-
-    List<Ride> rides = rt.getMultipleRides(p);
 
     List<RidePath> finalPaths = new ArrayList<>();
     List<RidePath> pathWeights = new LinkedList<>();
@@ -174,7 +215,7 @@ public class Reccomendations
     System.out.println();
   }
 
-  // Using Dijkstra's algorithm, I hope
+  // Using Dijkstra's algorithm, I think
   private static List<RideNode> minDistance(Ride source)
   {
     Map<Ride, Map<Ride, Integer>> paths = PathHandler.PATHS;
