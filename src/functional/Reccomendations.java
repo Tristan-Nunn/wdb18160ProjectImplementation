@@ -94,6 +94,8 @@ public class Reccomendations
 
   private static void printPath(List<RidePath> paths, String fromPath, List<String> excludedRides)
   {
+    List<String> pathsToPrint = new ArrayList<>();
+    StringBuilder toPrint = new StringBuilder("");
     for (String rideName : getLinkedRides(fromPath, paths))
     {
       if (fromPath == null)
@@ -102,10 +104,19 @@ public class Reccomendations
       }
       if (!excludedRides.contains(rideName))
       {
-        System.out.println("From " + fromPath + ", go to " + rideName);
         excludedRides.add(rideName);
-        printPath(paths, rideName, excludedRides);
+        if (!toPrint.toString().equals(""))
+          toPrint.append(", or " + rideName);
+        else
+          toPrint.append(rideName);
+        pathsToPrint.add(rideName);
       }
+    }
+    if (!toPrint.toString().equals(""))
+      System.out.println("From " + fromPath + ", you should go to " + toPrint.toString());
+    for (String rideName : pathsToPrint)
+    {
+      printPath(paths, rideName, excludedRides);
     }
   }
 
