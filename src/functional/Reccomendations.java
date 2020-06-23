@@ -88,18 +88,54 @@ public class Reccomendations
     List<RidePath> paths = getRoute(p, rides);
     paths = createReverseRoutes(paths);
 
-    printPath(paths);
+    System.out.println("Here is our suggested path for your group:");
+    printPath(paths, null, new ArrayList<>());
   }
 
-  private static void printPath(List<RidePath> paths)
+  private static void printPath(List<RidePath> paths, String fromPath, List<String> excludedRides)
   {
+    for (String rideName : getLinkedRides(fromPath, paths))
+    {
+      if (fromPath == null)
+      {
+        fromPath = "The Entrance";
+      }
+      if (!excludedRides.contains(rideName))
+      {
+        System.out.println("From " + fromPath + ", go to " + rideName);
+        excludedRides.add(rideName);
+        printPath(paths, rideName, excludedRides);
+      }
+    }
+  }
 
-    System.out.println("Here is our suggested path for your group:");
+  private static List<String> getLinkedRides(String name, List<RidePath> paths)
+  {
+    List<String> relevantPaths = new ArrayList<>();
+
     for (RidePath path : paths)
     {
-      String sourceName = (path.source != null) ? path.source.name : "the entrance";
-      System.out.println("From " + sourceName + ", go to " + path.destination.name + ".");
+      if (path.source == null || path.destination == null)
+      {
+        if (name == null && path.source == null)
+        {
+          relevantPaths.add(path.destination.name);
+        }
+        else if (name == null)
+        {
+          relevantPaths.add(path.source.name);
+        }
+      }
+      else if (path.source.name.equals(name))
+      {
+        relevantPaths.add(path.destination.name);
+      }
+      else if (path.destination.name.equals((name)))
+      {
+        relevantPaths.add(path.source.name);
+      }
     }
+    return relevantPaths;
   }
 
   private static List<RidePath> createReverseRoutes(List<RidePath> paths)
@@ -171,7 +207,7 @@ public class Reccomendations
     for (RideNode node : nodesFromEntrace)
     {
       int weight = getWeight(node.shortestPath, p, node.targetRide);
-      if (minWeight > weight)
+      if (minWeight > weight && rides.contains(node.targetRide))
       {
         minWeight = weight;
         minWeightRide = node.targetRide;
