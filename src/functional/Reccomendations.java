@@ -118,6 +118,7 @@ public class Reccomendations
     {
       printPath(paths, rideName, excludedRides);
     }
+    System.out.println();
   }
 
   private static List<String> getLinkedRides(String name, List<RidePath> paths)
