@@ -13,30 +13,66 @@ public class Main
   public static void main(String[] args)
   {
 
-    int userPath = -1;//userPath = 3;
-    while (userPath < 0)//(userPath == 3)
+    int userPath = -1;
+
+    Preferences prefs = null;
+    RideTree tree = null;
+    while (prefs == null)
     {
       userPath = Get.choiceFromUser("Chose an option: ", Arrays.asList(
           "Get recommendations for a single ride",
           "Get recommendations for a the entire park",
           "Generate a map of the park",
+          "Get a recommended route to take around the park",
           "Quit"
       ));
+
+      if (userPath == 5)
+        break;
+
+      if (userPath != 3)
+      {
+        prefs = makeGroup(); //Preferences.initPreferences();
+        tree = new RideTree(List.copyOf(RideHandler.RIDES));
+      }
+
+      Reccomendations.recommend(prefs, tree, userPath);
     }
 
-    
-    if (userPath == 4)
-      return;
+    // Quit command changes from 5 to 6
+    userPath = userPath==5 ? 6 : userPath;
+    while (userPath != 6)
+    {
+      userPath = Get.choiceFromUser("Chose an option: ", Arrays.asList(
+          "Get recommendations for a single ride",
+          "Get recommendations for a the entire park",
+          "Generate a map of the park",
+          "Get a recommended route to take around the park",
+          "Change your preferences",
+          "Quit"
+      ));
 
-    Preferences prefs = makeGroup(); //Preferences.initPreferences();
-    RideTree tree = new RideTree(List.copyOf(RideHandler.RIDES));
+      if (userPath == 6)
+        break;
 
-    Reccomendations.recommend(prefs, tree, userPath);
+      if (userPath == 5)
+      {
+        prefs = Preferences.createNewParty(prefs.leaderName, prefs.leaderEmail);
+        tree = new RideTree(List.copyOf(RideHandler.RIDES));
+      }
+      else
+      {
+        Reccomendations.recommend(prefs, tree, userPath);
+      }
+    }
 
-    if (prefs.leaderEmail != null)
-      System.out.println("Thank you " + prefs.leaderName + " your recommendations have been emailed to " + prefs.leaderEmail + ", I hope you enjoy your day at Time Travellers");
-    else
-      System.out.println("Thank you " + prefs.leaderName + " your recommendations have been send to your printer, I hope you enjoy your day at Time Travellers");
+    if (prefs != null)
+    {
+      if (prefs.leaderEmail != null)
+        System.out.println("Thank you " + prefs.leaderName + " your recommendations have been emailed to " + prefs.leaderEmail + ", I hope you enjoy your day at Time Travellers");
+      else
+        System.out.println("Thank you " + prefs.leaderName + " your recommendations have been send to your printer, I hope you enjoy your day at Time Travellers");
+    }
     System.out.println();
     System.out.println("Goodbye!");
   }
