@@ -10,14 +10,14 @@ import java.util.*;
 public class PathHandler
 {
   // Using an adjacency  map
-  public static final Map<Ride, Map<Ride, Integer>> PATHS = generatePaths();
+  public static final Map<Ride, Map<Ride, Integer>> PATHS = generatePaths("src/config/paths.txt", List.copyOf(RideHandler.RIDES));
 
-  private static Map<Ride, Map<Ride, Integer>> generatePaths()
+  public static Map<Ride, Map<Ride, Integer>> generatePaths(String filepath, List<Ride> expectedRides)
   {
     Map<Ride, Map<Ride, Integer>> paths = new HashMap<>();
 
     paths.put(null, new HashMap<>()); // this is the entrance
-    for (Ride r : List.copyOf(RideHandler.RIDES))
+    for (Ride r : expectedRides)
     {
       paths.put(r, new HashMap<>());
     }
@@ -29,7 +29,7 @@ public class PathHandler
 
     try
     {
-      stream = new FileInputStream("src/config/paths.txt");
+      stream = new FileInputStream(filepath);
       reader = new BufferedReader(new InputStreamReader(stream));
 
       Ride source = null;

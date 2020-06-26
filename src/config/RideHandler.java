@@ -14,9 +14,9 @@ import java.util.List;
 public class RideHandler
 {
   public static final List<String> ZONES = new ArrayList<>();
-  public static final List<Ride> RIDES = generateRides();
+  public static final List<Ride> RIDES = generateRides("src/config/rides.txt");
 
-      private static List<Ride> generateRides()
+      public static List<Ride> generateRides(String filepath)
       {
         List<Ride> rides = new LinkedList<Ride>();
 
@@ -27,7 +27,7 @@ public class RideHandler
 
         try
         {
-          stream = new FileInputStream("src/config/rides.txt");
+          stream = new FileInputStream(filepath);
           reader = new BufferedReader(new InputStreamReader(stream));
 
           String category = null;
@@ -35,7 +35,6 @@ public class RideHandler
           int heightmin = -1;
           int heightmax = -1;
           boolean minclusive = false;
-          boolean maxclusive = false;
           int groupmin = -1;
           int groupmax = -1;
           boolean adrenaline = false;
@@ -98,11 +97,10 @@ public class RideHandler
             {
               if (!name.equals(""))
               {
-                rides.add(new Ride(name, category, heightmin, heightmax, minclusive, maxclusive, groupmin, groupmax, adrenaline, wheelchair, horror, water, kids, kidsonly, waitTime));
+                rides.add(new Ride(name, category, heightmin, heightmax, minclusive, groupmin, groupmax, adrenaline, wheelchair, horror, water, kids, kidsonly, waitTime));
                 heightmin = -1;
                 heightmax = -1;
                 minclusive = false;
-                maxclusive = false;
                 groupmin = -1;
                 groupmax = -1;
                 adrenaline = false;
@@ -119,11 +117,10 @@ public class RideHandler
             {
                 if (!name.equals(""))
                 {
-                  rides.add(new Ride(name, category, heightmin, heightmax, minclusive, maxclusive, groupmin, groupmax, adrenaline, wheelchair, horror, water, kids, kidsonly, waitTime));
+                  rides.add(new Ride(name, category, heightmin, heightmax, minclusive, groupmin, groupmax, adrenaline, wheelchair, horror, water, kids, kidsonly, waitTime));
                   heightmin = -1;
                   heightmax = -1;
                   minclusive = false;
-                  maxclusive = false;
                   groupmin = -1;
                   groupmax = -1;
                   adrenaline = false;
@@ -145,7 +142,7 @@ public class RideHandler
           // at the end of the file, submit the final ride if one has been logged
           if (!name.equals(""))
           {
-            rides.add(new Ride(name, category, heightmin, heightmax, minclusive, maxclusive, groupmin, groupmax, adrenaline, wheelchair, horror, water, kids, kidsonly, waitTime));
+            rides.add(new Ride(name, category, heightmin, heightmax, minclusive, groupmin, groupmax, adrenaline, wheelchair, horror, water, kids, kidsonly, waitTime));
           }
         }
         catch (Exception e)

@@ -1,0 +1,6 @@
+# written by Tristan Nunn
+# 08/05/12020HE
+# This file contains a single test path to be parsed
+
+newpath "Test ride 1"
+"Test ride 2" 100

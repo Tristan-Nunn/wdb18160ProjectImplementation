@@ -1,0 +1,22 @@
+# written by Tristan Nunn
+# 08/05/12020HE
+# contains two test rides
+
+category "Test"
+
+# Ride with minimal info
+newride "Test ride 1"
+linetime 10
+
+# Ride with maximum info
+newride "Test ride 2"
+wheelchair
+horror
+water
+adrenaline
+kids
+kidsonly
+height 100 200
+group 4 8
+minclusive
+linetime 10

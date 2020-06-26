@@ -9,7 +9,6 @@ public class Ride
   public final int heightmin;
   public final int heightmax;
   public final boolean minclusive;
-  public final boolean maxclusive;
   public final int groupmin;
   public final int groupmax;
   public final boolean adrenaline;
@@ -20,14 +19,13 @@ public class Ride
   public final boolean kidsonly;
   public final int waitTime;
 
-  public Ride(String name, String category, int heightmin, int heightmax, boolean minclusive, boolean maxclusive, int groupmin, int groupmax, boolean adrenaline, boolean wheelchair, boolean horror, boolean water, boolean kids, boolean kidsonly, int waitTime)
+  public Ride(String name, String category, int heightmin, int heightmax, boolean minclusive, int groupmin, int groupmax, boolean adrenaline, boolean wheelchair, boolean horror, boolean water, boolean kids, boolean kidsonly, int waitTime)
   {
     this.name = name;
     this.category = category;
     this.heightmin = heightmin;
     this.heightmax = heightmax;
     this.minclusive = minclusive;
-    this.maxclusive = maxclusive;
     this.groupmin = groupmin;
     this.groupmax = groupmax;
     this.adrenaline = adrenaline;
