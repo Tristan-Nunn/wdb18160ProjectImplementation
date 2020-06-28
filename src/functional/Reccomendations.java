@@ -98,20 +98,20 @@ public class Reccomendations
   {
     List<String> pathsToPrint = new ArrayList<>();
     StringBuilder toPrint = new StringBuilder("");
-    for (String rideName : getLinkedRides(fromPath, paths))
+    for (RidePath ridePath : getLinkedRides(fromPath, paths))
     {
       if (fromPath == null)
       {
         fromPath = "The Entrance";
       }
-      if (!excludedRides.contains(rideName))
+      if (!excludedRides.contains(ridePath.destination.name))
       {
-        excludedRides.add(rideName);
+        excludedRides.add(ridePath.destination.name);
         if (!toPrint.toString().equals(""))
-          toPrint.append(", or " + rideName);
+          toPrint.append(", or " + ridePath.destination.name + " (Distance: " + ridePath.distance + " metres, wait time: " + ridePath.destination.waitTime + " minutes)");
         else
-          toPrint.append(rideName);
-        pathsToPrint.add(rideName);
+          toPrint.append(ridePath.destination.name + " (Distance: " + ridePath.distance + " metres, wait time: " + ridePath.destination.waitTime + ")");
+        pathsToPrint.add(ridePath.destination.name);
       }
     }
     if (!toPrint.toString().equals(""))
@@ -122,9 +122,9 @@ public class Reccomendations
     }
   }
 
-  private static List<String> getLinkedRides(String name, List<RidePath> paths)
+  private static List<RidePath> getLinkedRides(String name, List<RidePath> paths)
   {
-    List<String> relevantPaths = new ArrayList<>();
+    List<RidePath> relevantPaths = new ArrayList<>();
 
     for (RidePath path : paths)
     {
@@ -132,20 +132,30 @@ public class Reccomendations
       {
         if (name == null && path.source == null)
         {
-          relevantPaths.add(path.destination.name);
+          relevantPaths.add(path);
         }
         else if (name == null)
         {
-          relevantPaths.add(path.source.name);
+          RidePath reverse = new RidePath();
+          reverse.destination = path.source;
+          reverse.source = path.destination;
+          reverse.distance = path.distance;
+          reverse.weight = path.weight;
+          relevantPaths.add(reverse);
         }
       }
       else if (path.source.name.equals(name))
       {
-        relevantPaths.add(path.destination.name);
+        relevantPaths.add(path);
       }
       else if (path.destination.name.equals((name)))
       {
-        relevantPaths.add(path.source.name);
+        RidePath reverse = new RidePath();
+        reverse.destination = path.source;
+        reverse.source = path.destination;
+        reverse.distance = path.distance;
+        reverse.weight = path.weight;
+        relevantPaths.add(reverse);
       }
     }
     return relevantPaths;
