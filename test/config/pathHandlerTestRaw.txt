@@ -1,6 +1,9 @@
 # written by Tristan Nunn
 # 08/05/12020HE
-# This file contains a single test path to be parsed
+
+# This file builds on the two test rides, deliberately making the distance to ride 2 massive
+"Test ride 1" 200
+"Test ride 2" 10000
 
 newpath "Test ride 1"
-"Test ride 2" 100
+"Test ride 1" 100

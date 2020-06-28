@@ -50,11 +50,11 @@ public class PathHandler
 
         if (line.startsWith("newpath"))
         {
-          source = getRide(line.substring(line.indexOf('"') + 1, line.lastIndexOf('"')));
+          source = getRide(line.substring(line.indexOf('"') + 1, line.lastIndexOf('"')), expectedRides);
         }
         else if (line.startsWith("\""))
         {
-          Ride destination = getRide(line.substring(line.indexOf('"') + 1, line.lastIndexOf('"')));
+          Ride destination = getRide(line.substring(line.indexOf('"') + 1, line.lastIndexOf('"')), expectedRides);
           Integer walkTime = parseNumber(getNumber(line.substring(line.lastIndexOf('"'))));
 
           Map<Ride, Integer> sourceDestinations = paths.get(source);
@@ -103,12 +103,12 @@ public class PathHandler
     return s.substring(0, (endSpace!= -1) ? endSpace : s.length());
   }
 
-  private static Ride getRide(String s) throws IllegalArgumentException
+  private static Ride getRide(String s, List<Ride> expectedRides) throws IllegalArgumentException
   {
     if (s.equalsIgnoreCase("entrance"))
       return null;
 
-    for (Ride r : RideHandler.RIDES)
+    for (Ride r : expectedRides)
       if (r.name.equalsIgnoreCase(s))
         return r;
 
