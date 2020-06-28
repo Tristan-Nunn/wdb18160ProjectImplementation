@@ -6,4 +6,4 @@
 "Test ride 2" 10000
 
 newpath "Test ride 1"
-"Test ride 1" 100
+"Test ride 2" 100
