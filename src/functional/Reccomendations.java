@@ -26,6 +26,7 @@ public class Reccomendations
     public Ride source;
     public Ride destination;
     public int weight;
+    public int distance;
   }
 
   public static void recommend(Preferences p, RideTree rt, int recKey)
@@ -90,6 +91,7 @@ public class Reccomendations
 
     System.out.println("Here is our suggested path for your group:");
     printPath(paths, null, new ArrayList<>());
+    System.out.println();
   }
 
   private static void printPath(List<RidePath> paths, String fromPath, List<String> excludedRides)
@@ -118,7 +120,6 @@ public class Reccomendations
     {
       printPath(paths, rideName, excludedRides);
     }
-    System.out.println();
   }
 
   private static List<String> getLinkedRides(String name, List<RidePath> paths)
@@ -161,6 +162,7 @@ public class Reccomendations
         reversedPath.source = paths.get(i).destination;
         reversedPath.destination = paths.get(i).source;
         reversedPath.weight = paths.get(i).weight;
+        reversedPath.distance = paths.get(i).distance;
         paths.add(reversedPath);
       }
     }
@@ -200,6 +202,7 @@ public class Reccomendations
         newPath.source = r.getKey();
         newPath.destination = node.targetRide;
         newPath.weight = getWeight(node.shortestPath, p, node.targetRide);
+        newPath.distance = node.shortestPath;
         pathWeights.add(newPath);
       }
     }
@@ -215,6 +218,7 @@ public class Reccomendations
     // also add the path from the entrance
     List<RideNode> nodesFromEntrace = minDistance(null);
     int minWeight = Integer.MAX_VALUE;
+    int minDistance = 0;
     Ride minWeightRide = null;
     for (RideNode node : nodesFromEntrace)
     {
@@ -223,12 +227,14 @@ public class Reccomendations
       {
         minWeight = weight;
         minWeightRide = node.targetRide;
+        minDistance = node.shortestPath;
       }
     }
     RidePath entrance = new RidePath();
     entrance.source = null;
     entrance.destination = minWeightRide;
     entrance.weight = minWeight;
+    entrance.distance = minDistance;
     finalPaths.add(entrance);
 
     return finalPaths;
