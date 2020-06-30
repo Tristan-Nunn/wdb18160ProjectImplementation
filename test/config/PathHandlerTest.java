@@ -1,3 +1,4 @@
+// written by Tristan Nunn (wdb18160), June 12020HE, for the CS251 Project
 package config;
 
 import data_structures.Ride;

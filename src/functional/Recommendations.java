@@ -1,6 +1,7 @@
+// written by Tristan Nunn (wdb18160), June 12020HE, for the CS251 Project
 package functional;
 
-import cli_components.Get;
+import user_input.Get;
 import config.PathHandler;
 import config.RideHandler;
 import data_structures.Preferences;
@@ -12,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Reccomendations
+public class Recommendations
 {
   private static class RideNode
   {

@@ -1,8 +1,7 @@
-// written by Tristan Nunn, May 12020HE, for uni
-// I promise I wrote this code myself, etc...
+// written by Tristan Nunn (wdb18160), May 12020HE, for the CS251 Project
 package data_structures;
 
-import cli_components.Get;
+import user_input.Get;
 
 public class Preferences
 {
@@ -27,7 +26,6 @@ public class Preferences
     this.leaderName = leaderName;
     this.leaderEmail = leaderEmail;
     this.splitable = splitable;
-    //this.party = party;
     this.partySize = partySize;
     heights = new int[partySize];
     children = new boolean[partySize];
