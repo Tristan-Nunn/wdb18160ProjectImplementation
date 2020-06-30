@@ -79,7 +79,7 @@ public class Compatibility
       boolean canGo = true;
       if(
           !(ride.heightmin == -1 || (preferences.getHeights()[i] > ride.heightmin && !ride.minclusive) || (preferences.getHeights()[i] >= ride.heightmin && ride.minclusive)) ||
-          !(ride.heightmax == -1 || (preferences.getHeights()[i] < ride.heightmax && !ride.maxclusive) || (preferences.getHeights()[i] <= ride.heightmax && ride.maxclusive)))
+          !(ride.heightmax == -1 || (preferences.getHeights()[i] < ride.heightmax)))
         canGo = false;
       else if (!preferences.getChildren()[i] && ride.kidsonly)
         canGo = false;

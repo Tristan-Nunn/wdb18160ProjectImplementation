@@ -26,6 +26,7 @@ public class Reccomendations
     public Ride source;
     public Ride destination;
     public int weight;
+    public int distance;
   }
 
   public static void recommend(Preferences p, RideTree rt, int recKey)
@@ -90,26 +91,27 @@ public class Reccomendations
 
     System.out.println("Here is our suggested path for your group:");
     printPath(paths, null, new ArrayList<>());
+    System.out.println();
   }
 
   private static void printPath(List<RidePath> paths, String fromPath, List<String> excludedRides)
   {
     List<String> pathsToPrint = new ArrayList<>();
     StringBuilder toPrint = new StringBuilder("");
-    for (String rideName : getLinkedRides(fromPath, paths))
+    for (RidePath ridePath : getLinkedRides(fromPath, paths))
     {
       if (fromPath == null)
       {
         fromPath = "The Entrance";
       }
-      if (!excludedRides.contains(rideName))
+      if (!excludedRides.contains(ridePath.destination.name))
       {
-        excludedRides.add(rideName);
+        excludedRides.add(ridePath.destination.name);
         if (!toPrint.toString().equals(""))
-          toPrint.append(", or " + rideName);
+          toPrint.append(", or " + ridePath.destination.name + " (Distance: " + ridePath.distance + " metres, wait time: " + ridePath.destination.waitTime + " minutes)");
         else
-          toPrint.append(rideName);
-        pathsToPrint.add(rideName);
+          toPrint.append(ridePath.destination.name + " (Distance: " + ridePath.distance + " metres, wait time: " + ridePath.destination.waitTime + ")");
+        pathsToPrint.add(ridePath.destination.name);
       }
     }
     if (!toPrint.toString().equals(""))
@@ -118,12 +120,11 @@ public class Reccomendations
     {
       printPath(paths, rideName, excludedRides);
     }
-    System.out.println();
   }
 
-  private static List<String> getLinkedRides(String name, List<RidePath> paths)
+  private static List<RidePath> getLinkedRides(String name, List<RidePath> paths)
   {
-    List<String> relevantPaths = new ArrayList<>();
+    List<RidePath> relevantPaths = new ArrayList<>();
 
     for (RidePath path : paths)
     {
@@ -131,20 +132,30 @@ public class Reccomendations
       {
         if (name == null && path.source == null)
         {
-          relevantPaths.add(path.destination.name);
+          relevantPaths.add(path);
         }
         else if (name == null)
         {
-          relevantPaths.add(path.source.name);
+          RidePath reverse = new RidePath();
+          reverse.destination = path.source;
+          reverse.source = path.destination;
+          reverse.distance = path.distance;
+          reverse.weight = path.weight;
+          relevantPaths.add(reverse);
         }
       }
       else if (path.source.name.equals(name))
       {
-        relevantPaths.add(path.destination.name);
+        relevantPaths.add(path);
       }
       else if (path.destination.name.equals((name)))
       {
-        relevantPaths.add(path.source.name);
+        RidePath reverse = new RidePath();
+        reverse.destination = path.source;
+        reverse.source = path.destination;
+        reverse.distance = path.distance;
+        reverse.weight = path.weight;
+        relevantPaths.add(reverse);
       }
     }
     return relevantPaths;
@@ -161,6 +172,7 @@ public class Reccomendations
         reversedPath.source = paths.get(i).destination;
         reversedPath.destination = paths.get(i).source;
         reversedPath.weight = paths.get(i).weight;
+        reversedPath.distance = paths.get(i).distance;
         paths.add(reversedPath);
       }
     }
@@ -200,6 +212,7 @@ public class Reccomendations
         newPath.source = r.getKey();
         newPath.destination = node.targetRide;
         newPath.weight = getWeight(node.shortestPath, p, node.targetRide);
+        newPath.distance = node.shortestPath;
         pathWeights.add(newPath);
       }
     }
@@ -215,6 +228,7 @@ public class Reccomendations
     // also add the path from the entrance
     List<RideNode> nodesFromEntrace = minDistance(null);
     int minWeight = Integer.MAX_VALUE;
+    int minDistance = 0;
     Ride minWeightRide = null;
     for (RideNode node : nodesFromEntrace)
     {
@@ -223,12 +237,14 @@ public class Reccomendations
       {
         minWeight = weight;
         minWeightRide = node.targetRide;
+        minDistance = node.shortestPath;
       }
     }
     RidePath entrance = new RidePath();
     entrance.source = null;
     entrance.destination = minWeightRide;
     entrance.weight = minWeight;
+    entrance.distance = minDistance;
     finalPaths.add(entrance);
 
     return finalPaths;

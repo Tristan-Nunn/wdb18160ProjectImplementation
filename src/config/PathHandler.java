@@ -10,14 +10,14 @@ import java.util.*;
 public class PathHandler
 {
   // Using an adjacency  map
-  public static final Map<Ride, Map<Ride, Integer>> PATHS = generatePaths();
+  public static final Map<Ride, Map<Ride, Integer>> PATHS = generatePaths("src/config/paths.txt", List.copyOf(RideHandler.RIDES));
 
-  private static Map<Ride, Map<Ride, Integer>> generatePaths()
+  public static Map<Ride, Map<Ride, Integer>> generatePaths(String filepath, List<Ride> expectedRides)
   {
     Map<Ride, Map<Ride, Integer>> paths = new HashMap<>();
 
     paths.put(null, new HashMap<>()); // this is the entrance
-    for (Ride r : List.copyOf(RideHandler.RIDES))
+    for (Ride r : expectedRides)
     {
       paths.put(r, new HashMap<>());
     }
@@ -29,7 +29,7 @@ public class PathHandler
 
     try
     {
-      stream = new FileInputStream("src/config/paths.txt");
+      stream = new FileInputStream(filepath);
       reader = new BufferedReader(new InputStreamReader(stream));
 
       Ride source = null;
@@ -50,11 +50,11 @@ public class PathHandler
 
         if (line.startsWith("newpath"))
         {
-          source = getRide(line.substring(line.indexOf('"') + 1, line.lastIndexOf('"')));
+          source = getRide(line.substring(line.indexOf('"') + 1, line.lastIndexOf('"')), expectedRides);
         }
         else if (line.startsWith("\""))
         {
-          Ride destination = getRide(line.substring(line.indexOf('"') + 1, line.lastIndexOf('"')));
+          Ride destination = getRide(line.substring(line.indexOf('"') + 1, line.lastIndexOf('"')), expectedRides);
           Integer walkTime = parseNumber(getNumber(line.substring(line.lastIndexOf('"'))));
 
           Map<Ride, Integer> sourceDestinations = paths.get(source);
@@ -103,12 +103,12 @@ public class PathHandler
     return s.substring(0, (endSpace!= -1) ? endSpace : s.length());
   }
 
-  private static Ride getRide(String s) throws IllegalArgumentException
+  private static Ride getRide(String s, List<Ride> expectedRides) throws IllegalArgumentException
   {
     if (s.equalsIgnoreCase("entrance"))
       return null;
 
-    for (Ride r : RideHandler.RIDES)
+    for (Ride r : expectedRides)
       if (r.name.equalsIgnoreCase(s))
         return r;
 
