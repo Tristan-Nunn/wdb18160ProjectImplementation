@@ -10,6 +10,7 @@ newpath "Entrance"
 "Pony Jousts" 150
 "Crisis at Farpoint" 300
 "Rex Rampage" 300
+"Pet a Saur" 150
 "The Pain Train" 300
 "The Descent" 300
 
