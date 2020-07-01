@@ -1,4 +1,6 @@
 // written by Tristan Nunn (wdb18160), June 12020HE, for the CS251 Project
+// This class uses the "real" data stored in the current paths.txt and rides.txt files.
+// Obviously this isn't the best, but the refactor to force Recommendations to use my own List<Ride> is huge. I know because I tried (and the vestigial Map<Ride<Map<Ride,Integer>> is there from when I attempted that refactor)
 package functional;
 
 import config.PathHandler;
@@ -52,6 +54,7 @@ public class RecommendationsTest_MANUAL
     System.out.println("This should print the distance minimum from the entrance to every ride.");
     System.out.println("However it should only include rides the party wants to go on with the distance unchanged.");
     System.out.println("These are Build a Bot (390), Trench Chase (570), and Hall O Mirrors (450).");
+    System.out.println();
     int userPath = 4; // Personal Map
     Recommendations.recommend(makePrefs(), new RideTree(RideHandler.RIDES), userPath, PathHandler.PATHS);
   }
@@ -64,6 +67,7 @@ public class RecommendationsTest_MANUAL
     System.out.println("However Trench chase should be picked as it is a Kids' ride and Hall O Mirrors is not, and this party loves Kids' rides.");
     System.out.println("The next choice should be the centre ride, Build-a-bot, as this is a kids ride and is between the two outer rides.");
     System.out.println("The last choice should be Hall O Mirrors as this is the opposite edge to Trench Chase.");
+    System.out.println();
     int userPath = 5; // Recommended Route
     Recommendations.recommend(makePrefs(), new RideTree(RideHandler.RIDES), userPath, PathHandler.PATHS);
   }

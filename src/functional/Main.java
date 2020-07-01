@@ -37,7 +37,7 @@ public class Main
 
       if (userPath != 3)
       {
-        prefs = makeGroup();//Preferences.initPreferences(); // makeGroup(); <- this is for testing
+        prefs = Preferences.initPreferences(); // makeGroup(); <- this is for testing
         tree = new RideTree(List.copyOf(RideHandler.RIDES));
       }
 
