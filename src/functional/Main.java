@@ -1,4 +1,4 @@
-// written by Tristan Nunn (wdb18160), June 12020HE, for the CS251 Project
+// written by Tristan Nunn (wdb18160), July 12020HE, for the CS251 Project
 package functional;
 
 import config.PathHandler;
@@ -20,6 +20,9 @@ public class Main
     Preferences prefs = null;
     RideTree tree = null;
     Map<Ride, Map<Ride, Integer>> paths = PathHandler.PATHS;
+
+    System.out.println("Welcome to Time Travellers");
+    System.out.println();
 
     while (prefs == null)
     {
