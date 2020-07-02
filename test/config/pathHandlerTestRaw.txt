@@ -1,5 +1,5 @@
-# written by Tristan Nunn
-# 08/05/12020HE
+# written by Tristan Nunn (wdb18160)
+# June 12020HE
 
 # This file builds on the two test rides, deliberately making the distance to ride 2 massive
 "Test ride 1" 200

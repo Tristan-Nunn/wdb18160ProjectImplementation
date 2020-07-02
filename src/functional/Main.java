@@ -1,7 +1,9 @@
-package functional;// written by Tristan Nunn, May 12020HE, for uni
-// I promise I wrote this code myself, etc...
+// written by Tristan Nunn (wdb18160), July 12020HE, for the CS251 Project
+package functional;
 
-import cli_components.Get;
+import config.PathHandler;
+import data_structures.Ride;
+import user_input.Get;
 import config.RideHandler;
 import data_structures.Preferences;
 
@@ -17,52 +19,59 @@ public class Main
 
     Preferences prefs = null;
     RideTree tree = null;
+    Map<Ride, Map<Ride, Integer>> paths = PathHandler.PATHS;
+
+    System.out.println("Welcome to Time Travellers");
+    System.out.println();
+
     while (prefs == null)
     {
       userPath = Get.choiceFromUser("Chose an option: ", Arrays.asList(
           "Get recommendations for a single ride",
           "Get recommendations for a the entire park",
           "Generate a map of the park",
+          "Generate a personalised map of the park",
           "Get a recommended route to take around the park",
-          "Quit"
-      ));
-
-      if (userPath == 5)
-        break;
-
-      if (userPath != 3)
-      {
-        prefs = makeGroup(); //Preferences.initPreferences();
-        tree = new RideTree(List.copyOf(RideHandler.RIDES));
-      }
-
-      Reccomendations.recommend(prefs, tree, userPath);
-    }
-
-    // Quit command changes from 5 to 6
-    userPath = userPath==5 ? 6 : userPath;
-    while (userPath != 6)
-    {
-      userPath = Get.choiceFromUser("Chose an option: ", Arrays.asList(
-          "Get recommendations for a single ride",
-          "Get recommendations for a the entire park",
-          "Generate a map of the park",
-          "Get a recommended route to take around the park",
-          "Change your preferences",
           "Quit"
       ));
 
       if (userPath == 6)
         break;
 
-      if (userPath == 5)
+      if (userPath != 3)
+      {
+        prefs = Preferences.initPreferences(); // makeGroup(); <- this is for testing
+        tree = new RideTree(List.copyOf(RideHandler.RIDES));
+      }
+
+      Recommendations.recommend(prefs, tree, userPath, paths);
+    }
+
+    // Quit command changes from 6 to 7
+    userPath = userPath==6 ? 7 : userPath;
+    while (userPath != 7)
+    {
+      userPath = Get.choiceFromUser("Chose an option: ", Arrays.asList(
+          "Get recommendations for a single ride",
+          "Get recommendations for a the entire park",
+          "Generate a map of the park",
+          "Generate a personalised map of the park",
+          "Get a recommended route to take around the park",
+          "Change your preferences",
+          "Quit"
+      ));
+
+      if (userPath == 7)
+        break;
+
+      if (userPath == 6)
       {
         prefs = Preferences.createNewParty(prefs.leaderName, prefs.leaderEmail);
         tree = new RideTree(List.copyOf(RideHandler.RIDES));
       }
       else
       {
-        Reccomendations.recommend(prefs, tree, userPath);
+        Recommendations.recommend(prefs, tree, userPath, paths);
       }
     }
 
@@ -77,46 +86,10 @@ public class Main
     System.out.println("Goodbye!");
   }
 
-  /*
-  private static List<Ride> sort(List<Ride> r)
+  // This method was for manual testing only - to return a set of predefined preferences while this app was being developed
+  private static Preferences makeGroup()
   {
-    int s = r.size();
-    if (s < 2)
-    {
-      return r;
-    }
-    return merge(sort(List.copyOf(r.subList(0, s/2))), sort(List.copyOf(r.subList(s/2, s))));
-  }
-  private static List<Ride> merge(List<Ride> r1, List<Ride> r2)
-  {
-    List<Ride> r = new LinkedList<>();
-
-    int r1i = 0;
-    int r2i = 0;
-
-    // pick the smallest from r1 and r2
-    while (r1i < r1.size() && r2i < r2.size())
-    {
-      if (r1.get(r1i).getPref() < r2.get(r2i).getPref())
-        r.add(r2.get(r2i++));
-      else
-        r.add(r1.get(r1i++));
-    }
-
-    // empty r1 if not empty
-    while (r1i < r1.size())
-      r.add(r1.get(r1i++));
-    // empty r2 if not empty
-    while (r2i < r2.size())
-      r.add(r2.get(r2i++));
-
-    return r;
-  }
-  */
-
-  public static Preferences makeGroup()
-  {
-    Preferences p = new Preferences("John Doe", "something@doe.com", false, 3);
+    Preferences p = new Preferences("John Doe", "john@doe.com", false, 3);
     p.incrementKidLoves();
     p.incrementKidLoves();
     p.incrementAdrenLikes();
@@ -137,16 +110,5 @@ public class Main
     p.setWheelchair(false, 2);
     return p;
   }
-
-  //public static Preferences makeGroup2()
-  //{
-  //  Preferences p = new Preferences("J", "something@doe.com", false, 1);
-  //  p.incrementKidLoves();
-  //  p.incrementAdrenLoves();
-  //  p.setHeight(100, 0);
-  //  p.setChild(true, 0);
-  //  p.setWheelchair(false, 0);
-  //  return p;
-  //}
 
 }

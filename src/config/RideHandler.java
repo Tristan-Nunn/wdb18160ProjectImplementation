@@ -1,5 +1,4 @@
-// written by Tristan Nunn, May 12020HE, for uni
-// I promise I wrote this code myself, etc...
+// written by Tristan Nunn (wdb18160), May 12020HE, for the CS251 Project
 package config;
 
 import data_structures.Ride;

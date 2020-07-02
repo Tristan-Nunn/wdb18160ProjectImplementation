@@ -1,7 +1,6 @@
+// written by Tristan Nunn (wdb18160), June 12020HE, for the CS251 Project
 package functional;
 
-import cli_components.Get;
-import config.PathHandler;
 import config.RideHandler;
 import data_structures.Preferences;
 import data_structures.Ride;
@@ -12,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Reccomendations
+public class Recommendations
 {
   private static class RideNode
   {
@@ -29,7 +28,7 @@ public class Reccomendations
     public int distance;
   }
 
-  public static void recommend(Preferences p, RideTree rt, int recKey)
+  public static void recommend(Preferences p, RideTree rt, int recKey, Map<Ride, Map<Ride, Integer>> paths)
   {
     switch (recKey)
     {
@@ -40,10 +39,14 @@ public class Reccomendations
         recommendEntirePark(p, rt);
         break;
       case 3:
-        makeMap();
+        makeMap(paths);
         break;
       case 4:
-        recommendPath(p, rt);
+        makePersonalMap(p, rt, paths);
+        break;
+      case 5:
+        recommendPath(p, rt, paths);
+        break;
     }
   }
 
@@ -52,13 +55,6 @@ public class Reccomendations
 
     Ride r = rt.getSingleRide();
     printCompatibility(p, r);
-
-    while (Get.boolFromUser("Would you like to revise your preferences? (Y/N) "))
-    {
-      p = Preferences.createNewParty(p.leaderName, p.leaderEmail);
-      System.out.println();
-      printCompatibility(p, r);
-    }
   }
 
   private static void recommendEntirePark(Preferences p, RideTree rt)
@@ -66,30 +62,21 @@ public class Reccomendations
     List<Ride> rides = rt.getMultipleRides(p);
     Map<String, List<Ride>> ridesByZone = arrangeRidesByZone(rides);
     printCompatibility(ridesByZone);
-
-    while (Get.boolFromUser("Would you like to revise your preferences? (Y/N) "))
-    {
-      p = Preferences.createNewParty(p.leaderName, p.leaderEmail);
-      rides = rt.getMultipleRides(p);
-      ridesByZone = arrangeRidesByZone(rides);
-      System.out.println();
-      printCompatibility(ridesByZone);
-    }
   }
 
-  private static void recommendPath(Preferences p, RideTree rt)
+  private static void recommendPath(Preferences p, RideTree rt, Map<Ride, Map<Ride, Integer>> rawPaths)
   {
     List<Ride> rides = rt.getMultipleRides(p);
 
     if (rides.size() == 0)
     {
-      System.out.println("No rides in the Time travellers' park were found to meet your specifications.");
+      System.out.println("No rides in the Time travellers' park were found to meet your specifications!");
       return;
     }
-    List<RidePath> paths = getRoute(p, rides);
+    List<RidePath> paths = getRoute(p, rides, rawPaths);
     paths = createReverseRoutes(paths);
 
-    System.out.println("Here is our suggested path for your group:");
+    System.out.println("Hi " + p.leaderName + ", here is our suggested path for your group:");
     printPath(paths, null, new ArrayList<>());
     System.out.println();
   }
@@ -180,7 +167,7 @@ public class Reccomendations
   }
 
   // Using Kruskal's algorithm, I think
-  private static List<RidePath> getRoute(Preferences p, List<Ride> rides)
+  private static List<RidePath> getRoute(Preferences p, List<Ride> rides, Map<Ride, Map<Ride, Integer>> paths)
   {
     // 1. Find the minimum distance between each of the rides the group wants to visit
     // 2. Turn this into weight.
@@ -199,7 +186,7 @@ public class Reccomendations
 
     for (Ride r : rides)
     {
-      List<RideNode> rawNodes = minDistance(r);
+      List<RideNode> rawNodes = minDistance(r, paths);
       List<RideNode> filteredNodes = rawNodes.stream().filter(n->{return rides.contains(n.targetRide) && n.targetRide != r;}).collect(Collectors.toList());
       nodeWeights.put(r, filteredNodes);
     }
@@ -226,7 +213,7 @@ public class Reccomendations
     }
 
     // also add the path from the entrance
-    List<RideNode> nodesFromEntrace = minDistance(null);
+    List<RideNode> nodesFromEntrace = minDistance(null, paths);
     int minWeight = Integer.MAX_VALUE;
     int minDistance = 0;
     Ride minWeightRide = null;
@@ -250,10 +237,27 @@ public class Reccomendations
     return finalPaths;
   }
 
-  private static void makeMap()
+  private static void makeMap(Map<Ride, Map<Ride, Integer>> paths)
   {
-    List<RideNode> nodes = minDistance(null);
+    List<RideNode> nodes = minDistance(null, paths);
+    System.out.println("Here is a map of the Time Travellers park:");
+    mapPrint(nodes);
+  }
 
+  private static void makePersonalMap(Preferences p, RideTree rt, Map<Ride, Map<Ride, Integer>> paths)
+  {
+    List<RideNode> nodes = minDistance(null, paths);
+
+    List<Ride> eligibleRides = rt.getMultipleRides(p);
+
+    nodes = nodes.stream().filter(node-> {return eligibleRides.contains(node.targetRide);}).collect(Collectors.toList());
+
+    System.out.println("Hi " + p.leaderName + ", here is a personalised map of the park:");
+    mapPrint(nodes);
+  }
+
+  private static void mapPrint(List<RideNode> nodes)
+  {
     List<List<RideNode>> nodesByZone = new ArrayList<>(RideHandler.ZONES.size());
     for (int i = 0; i <  RideHandler.ZONES.size(); i++)
       nodesByZone.add(new ArrayList<>());
@@ -263,27 +267,31 @@ public class Reccomendations
         if (node.targetRide.category.equals(RideHandler.ZONES.get(i)))
           nodesByZone.get(i).add(node);
 
+    System.out.println();
+    System.out.println(makeSpace("Ride name", 25) + "Distance from park entrance (metres)");
     for (int i = 0; i < nodesByZone.size(); i++)
     {
-      System.out.println();
       System.out.println(RideHandler.ZONES.get(i) + " zone:");
-      System.out.println(makeSpace("Ride name", 25) + "Distance from park entrance (metres)");
 
+      if (nodesByZone.get(i).size() == 0)
+      {
+        System.out.println("No rides matching your specifications were found in this zone!");
+        System.out.println();
+        continue;
+      }
       for (RideNode r : nodesByZone.get(i))
       {
-        System.out.println();
         System.out.println(makeSpace(r.targetRide.name, 25) + r.shortestPath);
       }
+      System.out.println();
 
     }
     System.out.println();
   }
 
   // Using Dijkstra's algorithm, I think
-  private static List<RideNode> minDistance(Ride source)
+  private static List<RideNode> minDistance(Ride source, Map<Ride, Map<Ride, Integer>> paths)
   {
-    Map<Ride, Map<Ride, Integer>> paths = PathHandler.PATHS;
-
     List<RideNode> r = makeRideNodes();
 
     if (source != null)

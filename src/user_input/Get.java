@@ -1,6 +1,5 @@
-// written by Tristan Nunn, May 12020HE, for uni
-// I promise I wrote this code myself, etc...
-package cli_components;
+// written by Tristan Nunn (wdb18160), May 12020HE, for the CS251 Project
+package user_input;
 
 import java.util.List;
 import java.util.Scanner;

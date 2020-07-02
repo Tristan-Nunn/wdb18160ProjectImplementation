@@ -1,5 +1,5 @@
-# written by Tristan Nunn
-# 08/05/12020HE
+# written by Tristan Nunn (wdb18160)
+# June 12020HE
 # The paths in this file represent the distance it takes to get between the points
 # without crossing another node.
 # This file also assumes the entrance and exit for the ride is in the same spot
@@ -10,6 +10,7 @@ newpath "Entrance"
 "Pony Jousts" 150
 "Crisis at Farpoint" 300
 "Rex Rampage" 300
+"Pet a Saur" 150
 "The Pain Train" 300
 "The Descent" 300
 
